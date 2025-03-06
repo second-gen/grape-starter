@@ -9,12 +9,16 @@ module Starter
     class GrapeTasks < ::Rake::TaskLib
       include Rack::Test::Methods
 
-      attr_reader :resource, :api_class
+      attr_reader :resource
 
       def initialize(api_class = nil)
         super()
 
-        @api_class = api_class
+        if api_class.is_a?(String)
+          @api_class_name = api_class
+        else
+          @api_class = api_class
+        end
         define_tasks
       end
 
@@ -25,6 +29,10 @@ module Starter
       end
 
       private
+
+      def api_class
+        @api_class ||= @api_class_name.constantize
+      end
 
       def define_tasks
         routes
